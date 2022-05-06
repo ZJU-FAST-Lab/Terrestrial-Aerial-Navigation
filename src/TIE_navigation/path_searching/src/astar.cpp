@@ -38,23 +38,20 @@ Astar::~Astar() {
 
 int Astar::search(Eigen::Vector3d start_pt, Eigen::Vector3d end_pt, bool dynamic, double time_start) {
   /* ---------- initialize ---------- */
+  cout << "Astar begins!" << endl;
   NodePtr cur_node = path_node_pool_[0];
   cur_node->parent = NULL;
   cur_node->position = start_pt;
   cur_node->index = posToIndex(start_pt);
   cur_node->g_score = 0.0;
 
-  Eigen::Vector3d end_state(6);
   Eigen::Vector3i end_index;
   double time_to_goal;
-
   end_index = posToIndex(end_pt);
   cur_node->f_score = lambda_heu_ * getEuclHeu(cur_node->position, end_pt);
   cur_node->node_state = IN_OPEN_SET;
-
   open_set_.push(cur_node);
   use_node_num_ += 1;
-
   if( cur_node->position[2] < 0 ) cur_node->position[2] = 0;
   if( cur_node->position[2] >= ground_judge_ ){
     cur_node->g_score += aerial_penalty_ * cur_node->position[2] / 2.0;

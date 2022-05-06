@@ -134,7 +134,7 @@
     <param name="search/flying_cost_base" value="10" type="double"/>
 
     <!-- astar path searching -->
-    <param name="astar/resolution_astar" value="0.3" type="double"/>
+    <param name="astar/resolution_astar" value="0.2" type="double"/>
     <param name="astar/time_resolution" value="0.8" type="double"/>
     <param name="astar/lambda_heu" value="5.0" type="double"/>
     <param name="astar/margin" value="0.2" type="double"/>

@@ -47,9 +47,9 @@ void FastPlannerManager::initPlanModules(ros::NodeHandle& nh) {
   nh.param("manager/control_points_distance", pp_.ctrl_pt_dist, -1.0);
 
   bool use_geometric_path, use_kinodynamic_path, use_optimization, use_active_perception;
-  nh.param("manager/use_geometric_path", use_geometric_path, false);
-  nh.param("manager/use_kinodynamic_path", use_kinodynamic_path, false);
-  nh.param("manager/use_optimization", use_optimization, false);
+  nh.param("manager/use_geometric_path", use_geometric_path, true);
+  nh.param("manager/use_kinodynamic_path", use_kinodynamic_path, true);
+  nh.param("manager/use_optimization", use_optimization, true);
   nh.param("manager/planning_type", planning_type_, 0);
   nh.param("sdf_map/ground_judge", ground_judge, 1.0);
   nh.param("manager/primitive_num", primitive_num_, 1);
@@ -289,11 +289,8 @@ bool FastPlannerManager::kinodynamicReplan(Eigen::Vector3d start_pt, Eigen::Vect
   if(planning_type_ == 1){
     //benchmark
     t1 = ros::Time::now();
-
     geo_path_finder_->reset();
-
     int status = geo_path_finder_->search(start_pt, end_pt, false, 0);
-
     if (status == Astar::NO_PATH) {
       cout << "[kino replan]: Astar search fail!" << endl;
 
