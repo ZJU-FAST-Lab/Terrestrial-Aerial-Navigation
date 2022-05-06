@@ -1,0 +1,11 @@
+<launch>
+    <node pkg="poly_traj_server" type="poly_traj_server_node" name="poly_traj_server" output="screen" launch-prefix="">
+        <remap from="~/joy" to="/nouse"/>
+        <remap from="/position_cmd" to="planning/pos_cmd"/>
+        
+        <!-- <remap from="~/odometry" to="/vicon_imu_ekf_odom"/> -->
+        <remap from="~/odometry" to="visual_slam/odom"/>
+        <remap from="~/trajectory" to="/planning/polynomial"/>
+        <param name="traj_server/time_forward" value="1.5" type="double"/>
+	</node>
+</launch>
