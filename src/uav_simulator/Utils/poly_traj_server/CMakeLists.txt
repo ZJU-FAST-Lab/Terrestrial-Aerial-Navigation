@@ -15,10 +15,6 @@ find_package(catkin REQUIRED COMPONENTS
 
 find_package(Eigen3 REQUIRED)
 
-catkin_package(
-  INCLUDE_DIRS include
-)
-
 include_directories(
     include
     ${catkin_INCLUDE_DIRS}
