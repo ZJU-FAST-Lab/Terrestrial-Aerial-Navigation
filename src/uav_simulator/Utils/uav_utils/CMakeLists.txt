@@ -27,6 +27,7 @@ find_package(catkin REQUIRED COMPONENTS
   cmake_utils
 )
 
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 find_package(Eigen REQUIRED) # try to find manually installed eigen (Usually in /usr/local with provided FindEigen3.cmake)
 
