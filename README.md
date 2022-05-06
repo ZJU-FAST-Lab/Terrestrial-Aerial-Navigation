@@ -22,7 +22,7 @@ If our source code or hardware platform is used in your academic projects, pleas
       pages={3008-3015}
 }
 ```
-Video Links: [Youtube](<a href="https://www.youtube.com/watch?v=Bdb5mK9OKIo&feature=youtu.be" target="blank">).
+Video Links: [Youtube](https://www.youtube.com/watch?v=Bdb5mK9OKIo&feature=youtu.be).
 
   <p align="center">
     <img src="figs/cover.png" width="600"/>
