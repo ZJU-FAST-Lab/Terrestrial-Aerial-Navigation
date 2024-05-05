@@ -81,7 +81,7 @@ void EDTEnvironment::getSurroundDistance(Eigen::Vector3d pts[2][2][2], double di
   }
 }
 
-pair<double, Eigen::Vector3d> EDTEnvironment::interpolateTrilinear(double values[2][2][2],
+void EDTEnvironment::interpolateTrilinear(double values[2][2][2],
                                                                    const Eigen::Vector3d& diff,
                                                                    double& value,
                                                                    Eigen::Vector3d& grad) {
@@ -102,9 +102,11 @@ pair<double, Eigen::Vector3d> EDTEnvironment::interpolateTrilinear(double values
   grad[0] += diff[2] * (1 - diff[1]) * (values[1][0][1] - values[0][0][1]);
   grad[0] += diff[2] * diff[1] * (values[1][1][1] - values[0][1][1]);
   grad[0] *= resolution_inv_;
+
+  return;
 }
 
-pair<double, Eigen::Vector3d> EDTEnvironment::evaluateEDTWithGrad(const Eigen::Vector3d& pos,
+void EDTEnvironment::evaluateEDTWithGrad(const Eigen::Vector3d& pos,
                                                                   double time, double& dist,
                                                                   Eigen::Vector3d& grad) {
   Eigen::Vector3d diff;
@@ -115,6 +117,8 @@ pair<double, Eigen::Vector3d> EDTEnvironment::evaluateEDTWithGrad(const Eigen::V
   getSurroundDistance(sur_pts, dists);
 
   interpolateTrilinear(dists, diff, dist, grad);
+
+  return;
 }
 
 double EDTEnvironment::evaluateCoarseEDT(Eigen::Vector3d& pos, double time) {

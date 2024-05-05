@@ -92,7 +92,7 @@ void BsplineOptimizer::setCostFunction(const int& cost_code) {
   cost_function_ = cost_code;
 
   // print optimized cost function
-  string cost_str;
+  string cost_str = "";
   if (cost_function_ & SMOOTHNESS) cost_str += "smooth |";
   if (cost_function_ & DISTANCE) cost_str += " dist  |";
   if (cost_function_ & FEASIBILITY) cost_str += " feasi |";
@@ -111,12 +111,14 @@ void BsplineOptimizer::setWaypoints(const vector<Eigen::Vector3d>& waypts,
 
 Eigen::MatrixXd BsplineOptimizer::BsplineOptimizeTraj(const Eigen::MatrixXd& points, const double& ts,
                                                       const int& cost_function, int max_num_id, int max_time_id) {
+
   setControlPoints(points);
   setBsplineInterval(ts);
   setCostFunction(cost_function);
   setTerminateCond(max_num_id, max_time_id);
 
   optimize();
+
   return this->control_points_;
 }
 
@@ -125,6 +127,8 @@ void BsplineOptimizer::optimize() {
   iter_num_        = 0;
   min_cost_        = std::numeric_limits<double>::max();
   const int pt_num = control_points_.rows();
+
+  // std::cout << "pt_num" << pt_num << std::endl;
   g_q_.resize(pt_num);
   g_smoothness_.resize(pt_num);
   g_distance_.resize(pt_num);
@@ -224,6 +228,7 @@ void BsplineOptimizer::optimize() {
 Eigen::Vector2d BsplineOptimizer::calcOrthogonalComplements(Eigen::Vector2d a, Eigen::Vector2d b){
   //for calculating the nonholonomic cost
   Eigen::Vector2d result = a - (a.transpose() * b * b) / (b.squaredNorm());
+  return result;
 }
 
 void BsplineOptimizer::calcSmoothnessCost(const vector<Eigen::Vector3d>& q, double& cost,
@@ -374,13 +379,17 @@ void BsplineOptimizer::calcNonHolomonicCost(const vector<Eigen::Vector3d>& q, do
 
   // for (auto wp : waypoints_) {
   for (int i = 0; i < motion_state_list_.size() - 1; ++i) {
+
+
     if(motion_state_list_[i] == 0 && motion_state_list_[i + 1] == 0){
+
       if((i + 2) <= q.size() - 1){
         q1 = q[i].head(2);
         q2 = q[i + 1].head(2);
         q3 = q[i + 2].head(2);
         Eigen::Vector2d delta_q = q2 - q1;
         Eigen::Vector2d delta_q_next = q3 - q2;
+
         double delta_q_norm = delta_q.norm();
         double delta_q_next_norm = delta_q_next.norm();
         double q_T_q_next = delta_q.transpose() * delta_q_next;
@@ -388,13 +397,16 @@ void BsplineOptimizer::calcNonHolomonicCost(const vector<Eigen::Vector3d>& q, do
         double kappa_i = changed_Phi / delta_q_norm;
         if(kappa_i > kappa_max_){
           cost += pow(kappa_i - kappa_max_, 2);
-
+         
           double delta_q_norm_inv = 1.0 / delta_q.norm();
           double temp_k = 2.0 * (kappa_i - kappa_max_);
+
           double grad_Phi = -1.0 / (sqrt(1 - pow(cos(changed_Phi), 2))) ;
           Eigen::Vector2d P1, P2;
+
           P1 = calcOrthogonalComplements(q1, -q2) / (delta_q_norm * delta_q_next_norm); //xi, -xi+1
           P2 = calcOrthogonalComplements(-q2, q1) / (delta_q_norm * delta_q_next_norm); //-xi+1, xi
+
           Eigen::Vector2d orth_grad_1, orth_grad_2, orth_grad_3;
           orth_grad_1 = P2;
           orth_grad_2 = -P1 - P2;
@@ -406,6 +418,7 @@ void BsplineOptimizer::calcNonHolomonicCost(const vector<Eigen::Vector3d>& q, do
           gradient[i + 1](1) += temp_k * (-delta_q_norm_inv * grad_Phi * orth_grad_2[1] - changed_Phi / (delta_q.squaredNorm()));
           gradient[i + 2](0) += temp_k * (-delta_q_norm_inv * grad_Phi * orth_grad_3[0]);
           gradient[i + 2](1) += temp_k * (-delta_q_norm_inv * grad_Phi * orth_grad_3[1]);
+
         }
       }
     }
@@ -465,36 +478,42 @@ void BsplineOptimizer::combineCost(const std::vector<double>& x, std::vector<dou
     for (int i = 0; i < variable_num_ / dim_; i++)
       for (int j = 0; j < dim_; j++) grad[dim_ * i + j] += lambda1_ * g_smoothness_[i + order_](j);
   }
+
   if (cost_function_ & DISTANCE) {
     calcDistanceCost(g_q_, f_distance, g_distance_);
     f_combine += lambda2_ * f_distance;
     for (int i = 0; i < variable_num_ / dim_; i++)
       for (int j = 0; j < dim_; j++) grad[dim_ * i + j] += lambda2_ * g_distance_[i + order_](j);
   }
+
   if (cost_function_ & FEASIBILITY) {
     calcFeasibilityCost(g_q_, f_feasibility, g_feasibility_);
     f_combine += lambda3_ * f_feasibility;
     for (int i = 0; i < variable_num_ / dim_; i++)
       for (int j = 0; j < dim_; j++) grad[dim_ * i + j] += lambda3_ * g_feasibility_[i + order_](j);
   }
+
   if (cost_function_ & ENDPOINT) {
     calcEndpointCost(g_q_, f_endpoint, g_endpoint_);
     f_combine += lambda4_ * f_endpoint;
     for (int i = 0; i < variable_num_ / dim_; i++)
       for (int j = 0; j < dim_; j++) grad[dim_ * i + j] += lambda4_ * g_endpoint_[i + order_](j);
   }
+
   if (cost_function_ & WAYPOINTS) {
     calcWaypointsCost(g_q_, f_waypoints, g_waypoints_);
     f_combine += lambda5_ * f_waypoints;
     for (int i = 0; i < variable_num_ / dim_; i++)
       for (int j = 0; j < dim_; j++) grad[dim_ * i + j] += lambda5_ * g_waypoints_[i + order_](j);
   }
+
   if (cost_function_ & NON_HOLONOMIC) {
     calcNonHolomonicCost(g_q_, f_nonhonomolic, g_nonholonomic_);
     f_combine += lambda6_ * f_nonhonomolic;
     for (int i = 0; i < variable_num_ / dim_; i++)
       for (int j = 0; j < dim_; j++) grad[dim_ * i + j] += lambda6_ * g_nonholonomic_[i + order_](j);
   }
+
   /*  print cost  */
   // if ((cost_function_ & WAYPOINTS) && iter_num_ % 10 == 0) {
   //   cout << iter_num_ << ", total: " << f_combine << ", acc: " << lambda8_ * f_view
@@ -521,6 +540,8 @@ double BsplineOptimizer::costFunction(const std::vector<double>& x, std::vector<
     opt->min_cost_      = cost;
     opt->best_variable_ = x;
   }
+
+
   return cost;
 
   // /* evaluation */

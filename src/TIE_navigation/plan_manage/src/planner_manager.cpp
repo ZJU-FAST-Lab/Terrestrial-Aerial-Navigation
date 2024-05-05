@@ -134,7 +134,7 @@ int FastPlannerManager::checkTrajCollision(double& distance, double& duration) {
       fut_pt = local_data_.position_traj_.evaluateDeBoor(tm + t_now + fut_t);
 
       double dist = edt_environment_->evaluateCoarseEDT(fut_pt, -1.0);
-      if (dist < 0.1) {
+      if (dist < 0) {
         if(fut_t == 0){
           cout << "current quadrotor in collision!" << endl;
           result = 2;
@@ -161,7 +161,7 @@ int FastPlannerManager::checkTrajCollision(double& distance, double& duration) {
       fut_pt = best_traj.evaluate(t_now + fut_t);
 
       double dist = edt_environment_->evaluateCoarseEDT(fut_pt, -1.0);
-      if (dist < 0.1) {
+      if (dist < 0) {
         if(fut_t == 0){
           cout << "current quadrotor in collision!" << endl;
           result = 2;
@@ -221,9 +221,7 @@ bool FastPlannerManager::kinodynamicReplan(Eigen::Vector3d start_pt, Eigen::Vect
     t1 = ros::Time::now();
     
     kino_path_finder_->reset();
-
     int status = kino_path_finder_->search(start_pt, start_vel, start_acc, end_pt, end_vel, false);
-
     if (status == KinodynamicAstar::NO_PATH) {
       cout << "[kino replan]: kinodynamic search fail!" << endl;
 

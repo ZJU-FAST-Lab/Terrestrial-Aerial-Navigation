@@ -31,9 +31,13 @@ Video Links: [Youtube](https://www.youtube.com/watch?v=Bdb5mK9OKIo&feature=youtu
 </a>
 
 # Quick Start
-Compiling tests passed on ubuntu 18.04. You can just execute the following commands one by one.
+Compiling tests passed on ubuntu 20.04. You can just execute the following commands one by one.
+
+1. Install nlopt following the [official document](https://nlopt.readthedocs.io/en/latest/NLopt_Installation/).
+
+2. Install other dependencies and compile the project.
 ```
-sudo apt-get install libarmadillo-dev ros-melodic-nlopt
+sudo apt-get install libarmadillo-dev
 git clone https://github.com/ZJU-FAST-Lab/Terrestrial-Aerial-Navigation.git
 cd Terrestrial-Aerial-Navigation
 catkin_make
@@ -49,10 +53,10 @@ Then, you can trigger the planner and choose the planning goal using the ```2D N
 [NOTE] remember to change the CUDA option of **src/uav_simulator/local_sensing/CMakeLists.txt**, i.e., change the 'arch' and 'code' flags in the line of 
 
     set(CUDA_NVCC_FLAGS 
-      -gencode arch=compute_61,code=sm_61;
+      -gencode arch=compute_75,code=sm_75;
     ) 
 
-according to your Nvidia graphics card version. You can check the right code [here](https://github.com/tpruvot/ccminer/wiki/Compatibility).
+according to your Nvidia graphics card version. You can check the right code [here](https://arnon.dk/matching-sm-architectures-arch-and-gencode-for-various-nvidia-cards/).
 
 
 # Acknowledgements

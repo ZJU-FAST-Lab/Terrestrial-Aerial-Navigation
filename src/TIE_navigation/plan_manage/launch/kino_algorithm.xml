@@ -32,7 +32,9 @@
   <arg name="flight_type"/>
 
   <!-- main node -->
+  <!-- <node pkg="plan_manage" name="fast_planner_node" launch-prefix="valgrind" type="fast_planner_node" output="screen"> -->
   <node pkg="plan_manage" name="fast_planner_node" type="fast_planner_node" output="screen">
+    
     <remap from="/odom_world" to="$(arg odometry_topic)"/>
     <remap from="/sdf_map/odom" to="$(arg odometry_topic)"/>
 
@@ -149,7 +151,7 @@
     <param name="optimization/lambda3" value="0.00001" type="double"/>  <!-- feasibility -->
     <param name="optimization/lambda4" value="0.01" type="double"/>     <!-- end point -->
     <param name="optimization/lambda5" value="10" type="double"/>      <!-- waypoint -->
-    <param name="optimization/lambda6" value="0.005" type="double"/>      <!-- non holomonic -->
+    <param name="optimization/lambda6" value="0.0001" type="double"/>      <!-- non holomonic -->
     <param name="optimization/dist0" value="0.4" type="double"/>
     <param name="optimization/max_vel" value="$(arg max_vel)" type="double"/>
     <param name="optimization/max_acc" value="$(arg max_acc)" type="double"/>

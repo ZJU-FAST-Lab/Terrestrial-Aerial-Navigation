@@ -9,7 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(Eigen3 REQUIRED)
-find_package(PCL 1.7 REQUIRED)
+find_package(PCL REQUIRED)
 include_directories(${Eigen_INCLUDE_DIRS})
 
 find_path(EIGEN_INCLUDE_DIR Eigen/Core
@@ -34,7 +34,7 @@ include_directories(
 
 link_directories(${PCL_LIBRARY_DIRS})
 
-set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} -O3 -Wall")
+set(CMAKE_CXX_FLAGS "-std=c++14 ${CMAKE_CXX_FLAGS} -O3 -Wall")
 
 add_library( traj_utils
     src/planning_visualization.cpp 

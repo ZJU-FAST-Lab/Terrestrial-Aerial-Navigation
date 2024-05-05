@@ -98,6 +98,7 @@ int KinodynamicAstar::search(Eigen::Vector3d start_pt, Eigen::Vector3d start_v, 
   int occ_cnt = 0;
   vector<Eigen::Vector3d> primitive_to_pub_;
   bool visualize_occ_flag = false;
+
   while (!open_set_.empty())
   {
     primitive_to_pub_.clear();
@@ -160,7 +161,6 @@ int KinodynamicAstar::search(Eigen::Vector3d start_pt, Eigen::Vector3d start_v, 
     primitive_to_pub_.push_back(cur_node->state.head(3));
 
     iter_num_ += 1;
-
     double res = 1 / 2.0, time_res = 1 / 1.0, time_res_init = 1 / 20.0;
     Eigen::Matrix<double, 6, 1> cur_state = cur_node->state;
     Eigen::Matrix<double, 6, 1> pro_state;
@@ -192,7 +192,6 @@ int KinodynamicAstar::search(Eigen::Vector3d start_pt, Eigen::Vector3d start_v, 
 
     // cout << "cur state:" << cur_state.head(3).transpose() << endl;
 
-    
     for (int i = 0; i < inputs.size(); ++i)
       for (int j = 0; j < durations.size(); ++j)
       {
@@ -223,7 +222,6 @@ int KinodynamicAstar::search(Eigen::Vector3d start_pt, Eigen::Vector3d start_v, 
             std::cout << "vel" << std::endl;
           continue;
         }
-
         // Check not in the same voxel
         Eigen::Vector3i diff = pro_id - cur_node->index;
         int diff_time = pro_t_id - cur_node->time_idx; 
@@ -1091,6 +1089,7 @@ Eigen::Vector3i KinodynamicAstar::posToIndex(Eigen::Vector3d pt)
 int KinodynamicAstar::timeToIndex(double time)
 {
   int idx = floor((time - time_origin_) * inv_time_resolution_);
+  return idx;
 }
 
 void KinodynamicAstar::stateTransit(Eigen::Matrix<double, 6, 1>& state0, Eigen::Matrix<double, 6, 1>& state1,
